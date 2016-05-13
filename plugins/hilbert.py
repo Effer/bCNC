@@ -42,6 +42,79 @@ class Hilbert:
 				yield ye
 		else:
 			yield (x(),y())
+			
+			
+	def hilbertR(self,x0,y0,size,n):
+
+
+		if n >0:
+
+			subH = self.hilbertR(x0,y0,size,0)
+			xi = []
+			yi= []
+			for x,y in subH:
+					xi.append(x)
+					yi.append(y)
+
+			l = size
+			s = size / 4.
+			newSize1 = (l - s) / 2.
+			for ye in self.hilbertR(xi[1],yi[1],newSize1,n-1):
+				yield ye
+
+			newSize2 = (l - (2.*s)) / 2.
+			for ye in self.hilbertR(xi[2],yi[2],newSize2,n-1):
+				yield ye
+
+			newSize3 = (l - (3.*s)) / 2.
+			for ye in self.hilbertR(xi[3],yi[3],newSize3,n-1):
+				yield ye
+
+			newSize5 = (l - (3.*s)) / 2.
+			for ye in self.hilbertR(xi[5],yi[5],newSize5,n-1):
+				yield ye
+
+			newSize6 = (l - (2.*s)) / 2.
+			for ye in self.hilbertR(xi[6],yi[6],newSize6,n-1):
+				yield ye
+
+			newSize7 = (l - (s)) / 2.
+			for ye in self.hilbertR(xi[7],yi[7],newSize7,n-1):
+				yield ye
+			
+		else:
+			s = size / 4.
+			#foward
+			l = size
+			x1,y1 = x0 + l , y0
+			l -= s
+			x2,y2 = x1     , y1 + l
+			l -= s
+			x3,y3 = x2 - l , y2
+			l -= s
+			x4,y4 = x3     , y3 - l
+
+			#reverse
+			l = s
+			x5,y5 = x4     , y4 - l
+			l += s
+			x6,y6 = x5 - l , y5
+			l += s
+			x7,y7 = x6     , y6 + l
+			l += s
+			x8,y8 = x7 + l , y7
+
+
+			yield (x0,y0)
+			yield (x1,y1)
+			yield (x2,y2)
+			yield (x3,y3)
+			yield (x4,y4)
+			yield (x5,y5)
+			yield (x6,y6)
+			yield (x7,y7)
+			yield (x8,y8)
+
 
 	#----------------------------------------------------------------------
 	def make(self,n = 2, size = 100, depth = 0):
@@ -52,7 +125,13 @@ class Hilbert:
 		blocks = []
 		block = Block(self.name)
 
-		xi,yi = zip(*(self.hilbert(0.0,0.0,size,0.0,0.0,size,n)))
+		#xi,yi = zip(*(self.hilbert(0.0,0.0,size,0.0,0.0,size,n)))
+		hR = self.hilbertR(0.0,0.0,size,n)
+		xi = []
+		yi= []
+		for x,y in hR:
+				xi.append(x)
+				yi.append(y)
 
 		block.append(CNC.zsafe())
 		block.append(CNC.grapid(xi[0],yi[0]))
